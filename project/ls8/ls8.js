@@ -22,12 +22,12 @@ function processFile(content, cpu, onComplete) {
         // Remove whitespace from either end of the line
         line = line.trim();
         // Ignore empty lines
-        if (line[0] === '#' || line[0] === '\s' || line[0] === '\r' || line[0] === '\t') {
-            curAddr++;
+        if (line[0] === '#' || line[0] === '\s' || line[0] === '\r' || line[0] === '\t' || line[0] === '' || line.length <= 0) {
+            continue;
         } else {
             // Convert from binary string to numeric value
-            console.log(line.substring(0, 8));
-            let binLine = Number(line.substring(0, 8));
+            let binLine = parseInt(line.substring(0, 8), 2);
+            // console.log(binLine)
             // Store in the CPU with the .poke() function
             cpu.poke(curAddr, binLine);
             // And on to the next one

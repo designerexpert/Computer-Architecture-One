@@ -86,7 +86,7 @@ class CPU {
         switch (op) {
             case 'MUL':
                 // !!! IMPLEMENT ME
-                this.reg[regA] = this.reg[regA] * this.reg[regB];
+                this.reg[regA] = (this.reg[regA] * this.reg[regB]) & 255;
                 break;
         }
     }
@@ -97,10 +97,12 @@ class CPU {
     tick() {
         // Load the instruction register (OR) from the current PC
         // !!! IMPLEMENT ME
+        // console.log('This.reg.pc = ', this.reg.PC)
+        // console.log('ramread', this.ram.read(this.reg.PC))
         this.reg.IR = this.ram.read(this.reg.PC) // Use the PC counter to load the appropriate Instruction from Ram into the Register.
 
         // Debugging output
-        console.log(`${this.reg.PC}: ${this.reg.IR.toString(2)}`);
+        // console.log(`${this.reg.PC}: ${this.reg.IR.toString(2)}`);
 
         // Based on the value in the Instruction Register, locate the
         // appropriate hander in the branchTable
@@ -124,7 +126,7 @@ class CPU {
 
         // Increment the PC register to go to the next instruction
         // !!! IMPLEMENT ME
-        this.reg.PC++;
+        this.reg.PC += ((this.reg.IR >> 6) & 0b00000011) + 1;
     }
 
     // INSTRUCTION HANDLER CODE:
@@ -159,7 +161,7 @@ class CPU {
      */
     PRN(regA) {
         // !!! IMPLEMENT ME
-        console.log(regA)
+        console.log(this.reg[regA])
     }
 }
 
