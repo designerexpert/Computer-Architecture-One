@@ -6,12 +6,14 @@ const fs = require('fs');
 
 // Instructions
 
-const HLT  = 0b00011011; // Halt CPU
+const HLT = 0b00000001; // Halt CPU
 // !!! IMPLEMENT ME
 // LDI
+const LDI = 0b10011001; // Set the value of a register to an integer.
 // MUL
+const MUL = 0b10101010; // Multiply two registers together and store the result in registerA.
 // PRN
-
+const PRN = 0b01000011; // Print numeric value stored in the given register.
 /**
  * Class for simulating a simple Computer (CPU & memory)
  */
@@ -24,28 +26,31 @@ class CPU {
         this.ram = ram;
 
         this.reg = new Array(8).fill(0); // General-purpose registers
-        
+
         // Special-purpose registers
         this.reg.PC = 0; // Program Counter
         this.reg.IR = 0; // Instruction Register
 
-		this.setupBranchTable();
+        this.setupBranchTable();
     }
-	
+
 	/**
 	 * Sets up the branch table
 	 */
-	setupBranchTable() {
-		let bt = {};
+    setupBranchTable() {
+        let bt = {};
 
         bt[HLT] = this.HLT;
         // !!! IMPLEMENT ME
         // LDI
+        bt[LDI] = this.LDI;
         // MUL
+        bt[MUL] = this.MUL;
         // PRN
+        bt[PRN] = this.PRN;
 
-		this.branchTable = bt;
-	}
+        this.branchTable = bt;
+    }
 
     /**
      * Store value in memory address, useful for program loading
@@ -81,6 +86,7 @@ class CPU {
         switch (op) {
             case 'MUL':
                 // !!! IMPLEMENT ME
+                regA = regA * regB;
                 break;
         }
     }
@@ -119,27 +125,32 @@ class CPU {
      */
     HLT() {
         // !!! IMPLEMENT ME
+        this.stopClock();
     }
 
     /**
      * LDI R,I
      */
-    LDI() {
+    LDI(regNum, value) {
         // !!! IMPLEMENT ME
+        this.reg[regNum] = value & 255; // Coerce value to 255 max.
     }
 
     /**
      * MUL R,R
      */
-    MUL() {
+    MUL(regA, regB) {
         // !!! IMPLEMENT ME
+        // Call the ALU
+        this.alu('MUL', regA, regB);
     }
 
     /**
      * PRN R
      */
-    PRN() {
+    PRN(regA) {
         // !!! IMPLEMENT ME
+        console.log(regA)
     }
 }
 

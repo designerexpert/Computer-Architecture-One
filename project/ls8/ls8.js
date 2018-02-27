@@ -9,7 +9,7 @@ function processFile(content, cpu, onComplete) {
     // Pointer to the memory address in the CPU that we're
     // loading a value into:
     let curAddr = 0;
-    
+
     // Split the lines of the content up by newline
     const lines = content.split('\n');
 
@@ -18,19 +18,22 @@ function processFile(content, cpu, onComplete) {
     for (let line of lines) {
 
         // !!! IMPLEMENT ME
-
         // Strip comments
-
         // Remove whitespace from either end of the line
-
+        line = line.trim();
         // Ignore empty lines
+        if (line[0] === '#' || line[0] === '\s' || line[0] === '\r' || line[0] === '\t') {
+            curAddr++;
+        } else {
+            // Convert from binary string to numeric value
+            console.log(line.substring(0, 8));
+            let binLine = Number(line.substring(0, 8));
+            // Store in the CPU with the .poke() function
+            cpu.poke(curAddr, binLine);
+            // And on to the next one
+            curAddr++;
+        }
 
-        // Convert from binary string to numeric value
-
-        // Store in the CPU with the .poke() function
-
-        // And on to the next one
-        curAddr++;
     }
 
     onComplete(cpu);
@@ -45,7 +48,7 @@ function loadFileFromStdin(cpu, onComplete) {
     // Read everything from standard input, stolen from:
     // https://stackoverflow.com/questions/13410960/how-to-read-an-entire-text-stream-in-node-js
     process.stdin.resume();
-    process.stdin.on('data', function(buf) { content += buf.toString(); });
+    process.stdin.on('data', function (buf) { content += buf.toString(); });
     process.stdin.on('end', () => { processFile(content, cpu, onComplete); });
 }
 
