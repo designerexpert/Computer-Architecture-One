@@ -26,7 +26,7 @@ function processFile(content, cpu, onComplete) {
             continue;
         } else {
             // Convert from binary string to numeric value
-            let binLine = parseInt(line.substring(0, 8), 2);
+            let binLine = parseInt(line.substring(0, 8), 2);  // INTEGER
             // console.log(binLine)
             // Store in the CPU with the .poke() function
             cpu.poke(curAddr, binLine);

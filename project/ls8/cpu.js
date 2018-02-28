@@ -6,10 +6,10 @@ const fs = require('fs');
 
 // Instructions
 
-const HLT = 0b00000001; // Halt CPU
+const HLT = 0b00000001; // 1 Halt CPU
 // !!! IMPLEMENT ME
 // LDI
-const LDI = 0b10011001; // Set the value of a register to an integer.
+const LDI = 0b10011001; // 153 Set the value of a register to an integer.
 // MUL
 const MUL = 0b10101010; // Multiply two registers together and store the result in registerA.
 // PRN
@@ -102,7 +102,7 @@ class CPU {
         this.reg.IR = this.ram.read(this.reg.PC) // Use the PC counter to load the appropriate Instruction from Ram into the Register.
 
         // Debugging output
-        // console.log(`${this.reg.PC}: ${this.reg.IR.toString(2)}`);
+        console.log(`${this.reg.PC}: ${this.reg.IR.toString(2)}`);
 
         // Based on the value in the Instruction Register, locate the
         // appropriate hander in the branchTable

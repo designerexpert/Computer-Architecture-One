@@ -2,6 +2,11 @@
  * RAM access
  */
 class RAM {
+    /**
+     * Constructor
+     * 
+     * @param {*} size Size of RAM in bytes MUST be a power of 2
+     */
     constructor(size) {
         this.mem = new Array(size);
         this.mem.fill(0);
