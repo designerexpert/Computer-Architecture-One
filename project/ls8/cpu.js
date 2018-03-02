@@ -25,11 +25,14 @@ const ADD = 0b10101000; // ADD REG REG  | Adds two registers and saves the resul
 const AND = 0b10110011; // AND REG REG  | Bitwise-AND registerA and registerB, then store the result in registerA.
 const NOP = 0b00000000; // NOP          | No operation. Do nothing for this instruction.
 const NOT = 0b01110000; // NOT REG      | Performs a bitwise-NOT on the value in the provided register.
-
-// --------- NEED TO IMPLEMENT
-const CMP = 0b10100000; // CMP REG REG  | Compare the value in two registers. Sets Appropriate Flag in reg.FL bitwise.
 const PUSH = 0b01001101; // PUSH REG    | Decrement the SP, Copy Reg Value to location pointed by the new SP.
 const POP = 0b00001001; // POP R        | Copy Value pointed by SP to Reg, Increment the SP.
+const CMP = 0b10100000; // CMP REG REG  | Compare the value in two registers. Sets Appropriate Flag in reg.FL bitwise.
+// --------- NEED TO IMPLEMENT
+const JMP = 0b01010000; // JMP REG      | Jump to the address stored in the given register.
+const JEQ = 0b01010001; // JEQ REG      | If equal flag is set (true), jump to the address stored in the given register.
+const JNE = 0b01010010; // JNE REG      | If E flag is clear (false, 0), jump to the address stored in the given register.
+
 /**
  * Class for simulating a simple Computer (CPU & memory)
  */
@@ -47,7 +50,7 @@ class CPU {
         this.reg.PC = 0; // Program Counter.
         this.reg.IR = 0; // Instruction Register.
         this.reg.FL = 0; // Comparison Flag FL bits: 00000LGE.
-        this.reg[SP] = this.ram.read(0xF4); //INITIALIZE Stack Pointing to Memory.
+        this.reg[SP] = 0xF4; //INITIALIZE Stack Pointing to Memory.
         this.reg[IS] = 0; // INITIALIZE Interrupt Status on Register.
         this.reg[IM] = 0; // INITIALIZE Interrupt Mask on Register.
 
@@ -68,11 +71,14 @@ class CPU {
         bt[AND] = this.AND;
         bt[NOP] = this.NOP;
         bt[NOT] = this.NOT;
-
-        // --------- NEED TO IMPLEMENT
         bt[CMP] = this.CMP;
         bt[PUSH] = this.PUSH;
         bt[POP] = this.POP;
+        // --------- NEED TO IMPLEMENT
+        bt[JMP] = this.JMP;
+        bt[JEQ] = this.JEQ;
+        bt[JNE] = this.JNE;
+
 
         this.branchTable = bt;
     }
@@ -164,7 +170,7 @@ class CPU {
         handler.call(this, operandA, operandB);
 
         // Increment the PC register to go to the next instruction
-        this.reg.PC += ((this.reg.IR >> 6) & 0b00000011) + 1;
+        //this.reg.PC += ((this.reg.IR >> 6) & 0b00000011) + 1;
     }
 
     // INSTRUCTION HANDLER CODE:
@@ -175,41 +181,83 @@ class CPU {
 
     LDI(regNum, value) {
         this.reg[regNum] = value & 255; // Coerce value to 255 max.
+        this.reg.PC++;
+        this.reg.PC++;
+        this.reg.PC++;
     }
 
     MUL(regA, regB) {
         this.alu('MUL', regA, regB);
+        this.reg.PC++;
+        this.reg.PC++;
+        this.reg.PC++;
     }
 
     PRN(regA) {
         console.log(this.reg[regA])
+        this.reg.PC++;
+        this.reg.PC++;
     }
 
     ADD(regA, regB) {
         this.alu('ADD', regA, regB);
+        this.reg.PC++;
+        this.reg.PC++;
+        this.reg.PC++;
     }
 
     AND(regA, regB) {
         this.alu('AND', regA, regB);
+        this.reg.PC++;
+        this.reg.PC++;
+        this.reg.PC++;
     }
 
     NOT(regA) {
         this.alu('NOT', regA);
+        this.reg.PC++;
+        this.reg.PC++;
     }
 
     NOP() {
+        this.reg.PC++;
         return;
     }
 
     CMP(regA, regB) {
         this.alu('CMP', regA, regB);
+        this.reg.PC++;
+        this.reg.PC++;
+        this.reg.PC++;
     }
 
-    PUSH() {
-
+    PUSH(regA) {
+        // Decrease the Stack
+        this.reg[SP] = this.reg[SP] - 1;
+        this.ram.write(this.reg[SP], this.reg[regA]);
+        this.reg.PC++;
+        this.reg.PC++;
     }
-    POP() {
 
+    POP(regA) {
+        this.reg[regA] = this.ram.read(this.reg[SP]);
+        this.reg[SP] = this.reg[SP] + 1;
+        this.reg.PC++;
+        this.reg.PC++;
+    }
+
+    JMP(regA) {
+        this.reg.PC = this.reg[regA];
+    }
+
+    JEQ(regA) {
+        const bitComp = this.reg.FL & FL_EQ; // 1 if True 0 if False
+        this.reg.PC = bitComp ? this.reg[regA] : this.reg.PC + 2;
+    }
+
+    JNE(regA) {
+        const bitComp = this.reg.FL & FL_EQ; // 1 if True 0 if False
+        this.reg.PC = bitComp ? this.reg.PC + 2 : this.reg[regA];
     }
 }
 
