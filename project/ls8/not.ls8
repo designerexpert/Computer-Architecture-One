@@ -1,0 +1,10 @@
+# not.ls8
+
+10011001 # LDI R0,1  Load R0 with value 1
+00000000
+00000001
+01110000 # NOT R0
+00000000
+01000011 # PRN R0   Print value in R0: should be 254
+00000000
+00000001 # HLT Halt
